@@ -20,7 +20,7 @@ test_date = datetime.datetime.strptime(datetime.datetime.today().strftime('%Y%m%
 date_generated = pd.date_range(test_date, periods=10)
 datas = date_generated.strftime("%Y%m%d").to_list()
 
-gdrv_file = '/home/marina/projetos/para-precipitacao/precip.db'
+gdrv_file = 'precip.db'
 
 #%% Recuperar conteúdo da página
 main_url = 'https://www.foreca.com/103439062/Katuet%C3%A9-La-Paloma-Paraguay/10-day-forecast'
