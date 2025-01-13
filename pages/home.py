@@ -1,17 +1,29 @@
 from dash import dcc, html, Input, Output, callback
-from . import layout 
+import dash_bootstrap_components as dbc
 
-l = html.Div([
-    html.H3('Page 1'),
-    dcc.Dropdown(
-        {f'Page 1 - {i}': f'{i}' for i in ['New York City', 'Montreal', 'Los Angeles']},
-        id='page-1-dropdown'
-    ),
-    html.Div(id='page-1-display-value'),
-    dcc.Link('Go to Page 2', href='/page2')
+def card_generico(titulo, texto, especifico):
+    card = dbc.Card([
+        dbc.CardHeader(titulo),
+        dbc.CardBody([
+            html.P(texto),
+            especifico
+        ])
+    ])
+
+    return card
+
+
+layout = html.Div([
+    html.H3('Precipitação'),
+   dbc.Row([
+       dbc.Col(card_generico("Gráfico 1",'esse é o primeiro texto',''),width=7),
+       dbc.Col(card_generico("Gráfico 2",'',''),width=5),
+   ]),
+      dbc.Row([
+       dbc.Col(card_generico("Gráfico 3",'',''),width=6),
+       dbc.Col(card_generico("Registro de medidas",'',''),width=6),
+   ]),
 ])
-
-layout = layout.main_layout(l)
 
 
 @callback(
