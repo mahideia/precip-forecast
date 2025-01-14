@@ -18,7 +18,7 @@ def display_page(pathname):
     elif pathname == '/sobre':
         return sobre.layout
     else:
-        return '404'
+        return home.layout
 
 
 if __name__ == '__main__':

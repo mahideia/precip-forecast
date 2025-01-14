@@ -1,5 +1,6 @@
 from dash import dcc, html, Input, Output, callback
 import dash_bootstrap_components as dbc
+from . import layout
 
 def card_generico(titulo, texto, especifico):
     card = dbc.Card([
@@ -13,18 +14,20 @@ def card_generico(titulo, texto, especifico):
     return card
 
 
-layout = html.Div([
+layout_home = html.Div([
     html.H3('Precipitação'),
-   dbc.Row([
+    dbc.Row([
        dbc.Col(card_generico("Gráfico 1",'esse é o primeiro texto',''),width=7),
        dbc.Col(card_generico("Gráfico 2",'',''),width=5),
-   ]),
-      dbc.Row([
+   ], className='mb-4'),
+    dbc.Row([
        dbc.Col(card_generico("Gráfico 3",'',''),width=6),
        dbc.Col(card_generico("Registro de medidas",'',''),width=6),
    ]),
 ])
 
+
+layout = layout.main_layout(layout_home)
 
 @callback(
     Output('page-1-display-value', 'children'),
