@@ -46,5 +46,5 @@ content = html.Div(id="pg-content", style=CONTENT_STYLE)
 
 
 def main_layout(especifico):
-    pag = html.Div([dcc.Location(id="url"), sidebar, html.Div(especifico, id="pg-content", style=CONTENT_STYLE)])
+    pag = html.Div([sidebar, html.Div(especifico, id="pg-content", style=CONTENT_STYLE)])
     return pag

@@ -13,7 +13,10 @@ app.layout = html.Div([
 @callback(Output('page-content', 'children'),
           Input('url', 'pathname'))
 def display_page(pathname):
+    print(pathname)
+
     if pathname == '/home':
+        #return html.Div('este é um teste')
         return home.layout
     elif pathname == '/sobre':
         return sobre.layout
