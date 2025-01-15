@@ -11,12 +11,18 @@ cidade = "Katueté"
 def plot_grafico_previsao(data):
     #print(pd.to_datetime(data).strftime("%Y%m%d"))
     lt_conn = sqlite3.connect('precip.db')
-    db_query = pd.read_sql_query('''select * from previsoes limit 5;''', lt_conn)
+    db_query = pd.read_sql_query('''select * from previsoes ''', lt_conn)
     df = pd.DataFrame(db_query)
     lt_conn.close()
     
+    df['data_previsao']=df['data_previsao'].apply(str)
+    df['data_previsao']=df['data_previsao'].apply(lambda x: f'{x[0:4]}-{x[4:6]}-{x[6:]}')
 
     fig = go.Figure()
+    fig.add_trace(go.Bar(
+        x=df['data_previsao'],
+        y=df['valor_previsao']
+    ))
     return fig
 
 def card_generico(titulo, texto, especifico):
@@ -36,7 +42,7 @@ forecast_plot = html.Div([
 ])
 
 card_registro_medidas = html.Div([
-    dbc.Row(html.Div(['Data: ',dcc.DatePickerSingle(id='data-registro',date=datetime.today().strftime('%Y-%m-%d'))], className='pb-1')),
+    dbc.Row(html.Div(['Data: ',dcc.DatePickerSingle(id='data-registro',date=datetime.today().strftime('%Y-%m-%d'),max_date_allowed=datetime.today().strftime('%Y-%m-%d'))], className='pb-1')),
     dbc.Row(html.Div(['Precipitação (mm):   ',dcc.Input(id='precipitacao-mm', type="number",style={'width':'10em'})])),
     dbc.Row([dbc.Button('Salvar',id='salvar-medida',color='primary',className='me-1', style={'width':'10em'}),html.Span(id='salvo-ok')], className = 'pt-3')
 ]
@@ -75,7 +81,6 @@ def update_previsao10dias(data):
 def update_bd(nclicks, data, precipitacao):
     print(nclicks)
     if nclicks != None:
-
         dt = print(pd.to_datetime(data).strftime("%Y%m%d"))
         lt_conn = sqlite3.connect('precip.db')
         db_cursor = lt_conn.cursor()
@@ -86,4 +91,6 @@ def update_bd(nclicks, data, precipitacao):
         lt_conn.commit()
         db_cursor.close()
         lt_conn.close()
-    return 'Salvo - ' + data
+        return 'Salvo - ' + data
+    else:
+        return ''
