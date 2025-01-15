@@ -1,4 +1,4 @@
-from dash import dcc, html, Input, Output, callback
+from dash import dcc, html, Input, Output, State, callback
 import dash_bootstrap_components as dbc
 from . import layout
 import plotly.graph_objs as go
@@ -6,14 +6,15 @@ import pandas as pd
 import sqlite3
 from datetime import datetime
 
+cidade = "Katueté"
 
 def plot_grafico_previsao(data):
-    print(pd.to_datetime(data).strftime("%Y%m%d"))
+    #print(pd.to_datetime(data).strftime("%Y%m%d"))
     lt_conn = sqlite3.connect('precip.db')
     db_query = pd.read_sql_query('''select * from previsoes limit 5;''', lt_conn)
     df = pd.DataFrame(db_query)
     lt_conn.close()
-    print(df)  
+    
 
     fig = go.Figure()
     return fig
@@ -37,7 +38,7 @@ forecast_plot = html.Div([
 card_registro_medidas = html.Div([
     dbc.Row(html.Div(['Data: ',dcc.DatePickerSingle(id='data-registro',date=datetime.today().strftime('%Y-%m-%d'))], className='pb-1')),
     dbc.Row(html.Div(['Precipitação (mm):   ',dcc.Input(id='precipitacao-mm', type="number",style={'width':'10em'})])),
-    dbc.Row(dbc.Button('Salvar',color='primary',className='me-1', style={'width':'10em'}), className = 'pt-3')
+    dbc.Row([dbc.Button('Salvar',id='salvar-medida',color='primary',className='me-1', style={'width':'10em'}),html.Span(id='salvo-ok')], className = 'pt-3')
 ]
 
 )
@@ -64,3 +65,25 @@ layout = layout.main_layout(layout_home)
 )
 def update_previsao10dias(data):
     return plot_grafico_previsao(data)
+
+@callback(
+    Output('salvo-ok','children'),
+    Input('salvar-medida','n_clicks'),
+    State('data-registro','date'),
+    State('precipitacao-mm','value')
+)
+def update_bd(nclicks, data, precipitacao):
+    print(nclicks)
+    if nclicks != None:
+
+        dt = print(pd.to_datetime(data).strftime("%Y%m%d"))
+        lt_conn = sqlite3.connect('precip.db')
+        db_cursor = lt_conn.cursor()
+
+        insert = f'''Insert into medidas(cidade, data, precipitacao)
+                    values ('{cidade}',{data},{precipitacao});'''
+        db_cursor.execute(insert)
+        lt_conn.commit()
+        db_cursor.close()
+        lt_conn.close()
+    return 'Salvo - ' + data
