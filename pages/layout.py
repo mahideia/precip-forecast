@@ -2,7 +2,15 @@ from dash.dependencies import Input, Output
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
+import pandas as pd
+import sqlite3
 
+def seleciona_cidade():
+    lt_conn = sqlite3.connect('precip.db')
+    db_query = pd.read_sql_query('''select DISTINCT cidade from previsoes ''', lt_conn)
+    df = pd.DataFrame(db_query)
+    lt_conn.close()
+    return df['cidade'].to_list()
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width
 SIDEBAR_STYLE = {
@@ -25,10 +33,10 @@ CONTENT_STYLE = {
 
 sidebar = html.Div(
     [
-        html.H2("Sidebar", className="display-4"),
+        html.H2("Precipitação", className="display-6"),
         html.Hr(),
         html.P(
-            "A simple sidebar layout with navigation links", className="lead"
+            "Previsões e medidas reais", className="lead"
         ),
         dbc.Nav(
             [
@@ -38,6 +46,8 @@ sidebar = html.Div(
             vertical=True,
             pills=True,
         ),
+        html.Hr(),
+        dcc.Dropdown(seleciona_cidade(),id='dropdown-cidade')
     ],
     style=SIDEBAR_STYLE,
 )
@@ -48,3 +58,5 @@ content = html.Div(id="pg-content", style=CONTENT_STYLE)
 def main_layout(especifico):
     pag = html.Div([sidebar, html.Div(especifico, id="pg-content", style=CONTENT_STYLE)])
     return pag
+
+
