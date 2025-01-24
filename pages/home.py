@@ -199,8 +199,10 @@ def update_plot_previsao_ate_dia(cidade,data):
     df2 = pd.DataFrame(db_query)
     lt_conn.close()
     print(df2)
-    
-    precipitacao = df2['precipitacao']
-    fig = plot_previsao_ate_dia(df,precipitacao[0])
+    if len(df2)>0:
+        precipitacao = df2['precipitacao'][0]
+    else:
+        precipitacao=0
+    fig = plot_previsao_ate_dia(df,precipitacao)
 
     return fig
