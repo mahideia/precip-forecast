@@ -42,5 +42,9 @@ sudo systemctl start precip-forecast.service
 sudo firewall-cmd --permanent --add-port=5003/tcp
 sudo firewall-cmd --reload
 
+# Atualização:
+cd /opt/precip-forecast
+git pull
+sudo systemctl restart precip-forecast.service
 
 ```
