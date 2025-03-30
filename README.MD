@@ -30,4 +30,17 @@ sudo dnf --disablerepo=ol8_oci_included install lazygit
 python -m venv venv
 python -m pip install -r requirements.txt
 
+# Instalar como serviço:
+sudo cp precip-forecast.service /etc/systemd/system
+sudo systemctl daemon-reload
+sudo systemctl enable precip-forecast.service
+sudo systemctl start precip-forecast.service
+
+# Abrir firewall
+# Lembrar também de ajustar ingress rules no oracle cloud, em:
+# https://cloud.oracle.com/networking/vcns/ocid1.vcn.oc1.sa-saopaulo-1.amaaaaaa3d5r4oya6qo2zik5ue6ohwman6kz3gumwoipqjbr53dcsdvv3joa/security-lists/ocid1.securitylist.oc1.sa-saopaulo-1.aaaaaaaat7zhsyelhg34nefdnbtdug2lajidnmbzbmod3wl7mszhn4hq4gyq?region=sa-saopaulo-1
+sudo firewall-cmd --permanent --add-port=5003/tcp
+sudo firewall-cmd --reload
+
+
 ```
