@@ -3,3 +3,4 @@ venv
 .vscode/data
 .vscode/extensions
 pages/__pycache__
+__pycache__
