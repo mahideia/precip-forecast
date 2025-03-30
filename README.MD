@@ -26,4 +26,8 @@ sudo systemctl enable docker
 sudo dnf copr enable atim/lazygit -y
 sudo dnf --disablerepo=ol8_oci_included install lazygit
 
+# Criar env
+python -m venv venv
+python -m pip install -r requirements.txt
+
 ```
