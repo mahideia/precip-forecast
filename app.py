@@ -9,6 +9,7 @@ app.layout = html.Div([
     html.Div(id='page-content')
 ])
 
+server = app.server
 
 @callback(Output('page-content', 'children'),
           Input('url', 'pathname'))
