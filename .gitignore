@@ -1,2 +1,4 @@
 __precip
 venv
+.vscode/data
+.vscode/extensions
