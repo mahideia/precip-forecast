@@ -1,6 +1,6 @@
 from dash import Dash, dcc, html, Input, Output, callback
 import dash_bootstrap_components as dbc
-from pages import home, sobre
+from pages import home, sobre, mais
 
 app = Dash(__name__, suppress_callback_exceptions=True,external_stylesheets=[dbc.themes.SANDSTONE] )
 
@@ -21,6 +21,8 @@ def display_page(pathname):
         return home.layout
     elif pathname == '/sobre':
         return sobre.layout
+    elif pathname == '/mais':
+        return mais.layout
     else:
         return home.layout
 

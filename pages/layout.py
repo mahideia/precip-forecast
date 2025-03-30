@@ -41,13 +41,14 @@ sidebar = html.Div(
         dbc.Nav(
             [
                 dbc.NavLink("Home", href="/home", active="exact"),
+                dbc.NavLink("Mais", href="/mais", active="exact"),
                 dbc.NavLink("Sobre", href="/sobre", active="exact"),
            ],
             vertical=True,
             pills=True,
         ),
-        html.Hr(),
-        dcc.Dropdown(seleciona_cidade(),id='dropdown-cidade')
+        html.Hr(), html.P("Selecionar cidade:"),
+        dcc.Dropdown(seleciona_cidade(),'Katueté',id='dropdown-cidade')
     ],
     style=SIDEBAR_STYLE,
 )
