@@ -2,3 +2,4 @@ __precip
 venv
 .vscode/data
 .vscode/extensions
+pages/__pycache__
