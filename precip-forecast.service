@@ -5,9 +5,9 @@ After=network.target
 [Service]
 User=opc
 Group=opc
-WorkingDirectory=/home/opc/precip-forecast
-Environment="PATH=/home/opc/precip-forecast/venv/bin"
-ExecStart=/home/opc/precip-forecast/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:5003 app:server
+WorkingDirectory=/opt/precip-forecast
+Environment="PATH=/opt/precip-forecast/venv/bin"
+ExecStart=/opt/precip-forecast/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:5003 app:server
 ExecReload=/bin/kill -s HUP $MAINPID
 KillMode=mixed
 TimeoutStopSec=5
