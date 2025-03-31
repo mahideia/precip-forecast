@@ -8,18 +8,7 @@ from datetime import datetime
 
 
 
-def plot_grafico_previsao(df):
-    fig = go.Figure()
-    fig.add_trace(go.Bar(
-        x=df['data_previsao'],
-        y=df['valor_previsao']
-    ))
-    fig.update_layout(
-        yaxis_title='Precipitação (mm)',
-        margin=dict(l=20, r=20, t=5, b=5),
-        template='plotly_white'
-    )
-    return fig
+
 
 def plot_previsao_vs_real(df): #refazer!!
     fig = go.Figure()
@@ -55,13 +44,14 @@ def plot_previsao_ate_dia(df,precipitacao):
     return fig
 
 
-def card_generico(titulo, texto, especifico):
+def card_generico(titulo, texto, especifico, rodape=None):
     card = dbc.Card([
         dbc.CardHeader(titulo),
         dbc.CardBody([
             html.P(texto),
             especifico
-        ])
+        ]),
+        dbc.CardFooter(rodape)
     ])
 
     return card
@@ -110,3 +100,35 @@ layout_mais = html.Div([
 layout = layout.main_layout(layout_mais)
 
 
+@callback(
+    Output('previsao-ate-dia','figure'),
+    Input('dropdown-cidade','value'),
+    Input('data-previsao-dia','date'),
+)
+def update_plot_previsao_ate_dia(cidade,data):
+    print('Data',data)
+    data_previsao = pd.to_datetime(data).strftime("%Y%m%d")
+    lt_conn = sqlite3.connect('precip.db')
+    db_query = pd.read_sql_query(f'''select * from previsoes where cidade="{cidade}" and data_previsao={data_previsao}''', lt_conn)
+    df = pd.DataFrame(db_query)
+    lt_conn.close()
+    print('dados',df)
+
+    df['data_previsao']=df['data_previsao'].apply(str)
+    df['data_previsao']=df['data_previsao'].apply(lambda x: f'{x[0:4]}-{x[4:6]}-{x[6:]}')
+
+    df['data_real']=df['data_real'].apply(str)
+    df['data_real']=df['data_real'].apply(lambda x: f'{x[0:4]}-{x[4:6]}-{x[6:]}')
+
+    lt_conn = sqlite3.connect('precip.db')
+    db_query = pd.read_sql_query(f'''select * from medidas where cidade="{cidade}" and data={data_previsao}''', lt_conn)
+    df2 = pd.DataFrame(db_query)
+    lt_conn.close()
+    print(df2)
+    if len(df2)>0:
+        precipitacao = df2['precipitacao'][0]
+    else:
+        precipitacao=0
+    fig = plot_previsao_ate_dia(df,precipitacao)
+
+    return fig
