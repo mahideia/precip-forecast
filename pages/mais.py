@@ -4,7 +4,7 @@ from . import layout
 import plotly.graph_objs as go
 import pandas as pd
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 
@@ -56,43 +56,44 @@ def card_generico(titulo, texto, especifico, rodape=None):
 
     return card
 
-forecast_plot = html.Div([
-    dbc.Row(html.Div(['Data:  ',dcc.DatePickerSingle(id='data-inicio-previsao',max_date_allowed=datetime.today().strftime('%Y-%m-%d'), date=datetime.today().strftime('%Y-%m-%d'))]),),
-    dbc.Row(dcc.Graph(id='previsao-10dias', style={'padding':'10px'}))
-])
 
-forecast_real_plot = html.Div([
-    dbc.Row([dbc.Col(html.Div(['Mês:   ',dcc.Dropdown(['01','02','03','04','05','06','07','08','09','10','11','12'],'01',id='dropdown-mes-forecast-real',style={'width':'5em'})])),
-            dbc.Col(html.Div(['Ano:   ',dcc.Dropdown(['2024','2025'],'2025',id='dropdown-ano-forecast-real',style={'width':'6em'})])),
-            dbc.Col(html.Div(['Intervalo*: ', dcc.Dropdown(['1','2','3','4','5','6','7','8','9','10'],'5',id='dropdown-dt-forecast-real',style={'width':'5em'})]))]),
-    dbc.Row(dcc.Graph(id='forecast-vs-real', style={'padding':'5px'})),
-    dbc.Row(html.Div('* (previsto x dias antes)'))
-])
+
+#forecast_real_plot = html.Div([
+#    dbc.Row([dbc.Col(html.Div(['Mês:   ',dcc.Dropdown(['01','02','03','04','05','06','07','08','09','10','11','12'],'01',id='dropdown-mes-forecast-real',style={'width':'5em'})])),
+#            dbc.Col(html.Div(['Ano:   ',dcc.Dropdown(['2024','2025'],'2025',id='dropdown-ano-forecast-real',style={'width':'6em'})])),
+#            dbc.Col(html.Div(['Intervalo*: ', dcc.Dropdown(['1','2','3','4','5','6','7','8','9','10'],'5',id='dropdown-dt-forecast-real',style={'width':'5em'})]))]),
+#    dbc.Row(dcc.Graph(id='forecast-vs-real', style={'padding':'5px'})),
+#    dbc.Row(html.Div('* (previsto x dias antes)'))
+#])
 
 forecast_day_plot = html.Div([
-    dbc.Row(html.Div(['Data:  ',dcc.DatePickerSingle(id='data-previsao-dia',max_date_allowed=datetime.today().strftime('%Y-%m-%d'), date=datetime.today().strftime('%Y-%m-%d'))]),),
+    dbc.Row(html.Div(['Data:  ',dcc.DatePickerSingle(id='data-previsao-dia',max_date_allowed=datetime.today().strftime('%Y-%m-%d'), date=datetime.today().strftime('%Y-%m-%d'), display_format='DD/MM/YYYY')]),),
     dbc.Row(dcc.Graph(id='previsao-ate-dia', style={'padding':'10px'}))
 ])
 
-card_registro_medidas = html.Div([
-    dbc.Row(html.Div(['Data: ',dcc.DatePickerSingle(id='data-registro',date=datetime.today().strftime('%Y-%m-%d'),max_date_allowed=datetime.today().strftime('%Y-%m-%d'))], className='pb-1')),
-    dbc.Row(html.Div(['Precipitação (mm):   ',dcc.Input(id='precipitacao-mm', type="number",style={'width':'10em'})])),
-    dbc.Row([dbc.Button('Salvar',id='salvar-medida',color='primary',className='me-1', style={'width':'10em'}),html.Span(id='salvo-ok')], className = 'pt-3')
-]
+data_inicio = datetime.today() - timedelta(days=30)
+forecast_real_plot = html.Div([
+    dbc.Row(html.Div(['Período:   ',dcc.DatePickerRange(id='periodo-dispersao',max_date_allowed=datetime.today(),  start_date= data_inicio, end_date=datetime.today(),display_format='DD/MM/YYYY')])),
+    dbc.Row(dcc.Graph(id='previsao-real-dispersao', style={'padding':'10px'}))
+])
 
-)
+forecast_real_boxplot = html.Div([
+    dbc.Row(html.Div(['Período:   ',dcc.DatePickerRange(id='periodo-dispersao',max_date_allowed=datetime.today(),  start_date= data_inicio, end_date=datetime.today(),display_format='DD/MM/YYYY')])),
+    dbc.Row(dcc.Graph(id='boxplot-diff',style={'padding':'10px'}))
+])
+
 
 
 layout_mais = html.Div([
     html.H3('Qualidade das previsões'),
     dbc.Row([
-       dbc.Col(card_generico("Precipitação prevista",'',forecast_plot),width=6),
-       dbc.Col(card_generico("Previsões para um dia",'',forecast_day_plot),width=6),
+       dbc.Col(card_generico("Todas as previsões até dia",'',forecast_day_plot),width=6),
+       dbc.Col(card_generico("Previsões vs Real",'',forecast_real_plot),width=6),
        #dbc.Col(card_generico("Previsto vs. Real",'',forecast_real_plot),width=5),
    ], className='mb-4'),
     dbc.Row([
-       #dbc.Col(card_generico("Previsões para um dia",'',''),width=6),
-       dbc.Col(card_generico("Registro de medidas",'',card_registro_medidas),width=6),
+       dbc.Col(card_generico("Previsões para um dia",'',forecast_real_boxplot),width=12),
+       #dbc.Col(card_generico("Registro de medidas",'',card_registro_medidas),width=6),
    ], className='mb-4'),
 ])
 
